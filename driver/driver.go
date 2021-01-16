@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go-webdriver/excutor"
-	"go-webdriver/util"
+	"github.com/zhouzhe1157/go-webdriver/excutor"
+	"github.com/zhouzhe1157/go-webdriver/util"
 	"net/http"
 )
 
@@ -51,7 +51,7 @@ func GetSession() (excutor.InitSessionResponse, error) {
 		Request: excutor.InitSessionRequest{
 			Capabilities: excutor.Capablities{
 				BrowserName: "chrome",
-				Options:     excutor.Options{Args: []string{
+				Options: excutor.Options{Args: []string{
 					fmt.Sprintf("--user-data-dir=E:\\logs\\%s", userDataDir),
 					fmt.Sprintf("--headless"),
 				}},

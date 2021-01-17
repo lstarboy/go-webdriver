@@ -1,4 +1,4 @@
-module github.com/zhouzhe1157/go-webdriver
+module zhouzhe1157/go-webdriver
 
 go 1.13
 

@@ -1,8 +1,8 @@
 package test
 
 import (
-	"go-webdriver/proccessor"
-	"go-webdriver/proccessor/pipline"
+	"github.com/zhouzhe1157/go-webdriver/proccessor"
+	"github.com/zhouzhe1157/go-webdriver/proccessor/pipline"
 )
 
 func start() {

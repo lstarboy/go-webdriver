@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go-webdriver/excutor"
-	"go-webdriver/util"
+	"github.com/zhouzhe1157/go-webdriver/excutor"
+	"github.com/zhouzhe1157/go-webdriver/util"
 	"net/http"
 )
 

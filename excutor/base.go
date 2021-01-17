@@ -26,13 +26,10 @@ func (e Error) Error() string {
 	return e.Err
 }
 
-/**
- * 	"desiredCapabilities": {
-		"goog:chromeOptions": {
-			"args": ["--user-data-dir=E:\\logs\\aac"]
-		}
-	}
-*/
+type ChromeOptions struct {
+	UserDataDir string
+	IsHeadless  bool
+}
 
 type Options struct {
 	Args []string `json:"args"`

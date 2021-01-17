@@ -44,17 +44,21 @@ func send(req CommandRequest) (string, error) {
 	return body, nil
 }
 
-func GetSession() (excutor.InitSessionResponse, error) {
-	userDataDir := util.RandString(16)
+func GetSession(opt excutor.ChromeOptions) (excutor.InitSessionResponse, error) {
+	opts := []string{}
+	if opt.UserDataDir != "" {
+		//userDataDir := util.RandString(16)
+		opts = append(opts, fmt.Sprintf("--user-data-dir=%s", opt.UserDataDir))
+	}
+	if opt.IsHeadless {
+		opts = append(opts, fmt.Sprintf("--headless"))
+	}
 	req := CommandRequest{
 		Command: excutor.NewSession,
 		Request: excutor.InitSessionRequest{
 			Capabilities: excutor.Capablities{
 				BrowserName: "chrome",
-				Options: excutor.Options{Args: []string{
-					fmt.Sprintf("--user-data-dir=E:\\logs\\%s", userDataDir),
-					fmt.Sprintf("--headless"),
-				}},
+				Options:     excutor.Options{Args: opts},
 			},
 		},
 	}

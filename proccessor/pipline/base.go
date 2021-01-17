@@ -1,6 +1,6 @@
 package pipline
 
-import "github.com/zhouzhe1157/go-webdriver/proccessor/action"
+import "go-webdriver/proccessor/action"
 
 type pip interface {
 

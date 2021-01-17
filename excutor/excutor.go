@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/zhouzhe1157/go-webdriver/util"
+	"go-webdriver/util"
 	"strings"
 	"time"
 )

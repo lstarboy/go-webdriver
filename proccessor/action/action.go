@@ -2,9 +2,9 @@ package action
 
 import (
 	"fmt"
-	"github.com/zhouzhe1157/go-webdriver/driver"
-	"github.com/zhouzhe1157/go-webdriver/excutor"
-	"github.com/zhouzhe1157/go-webdriver/util"
+	"go-webdriver/driver"
+	"go-webdriver/excutor"
+	"go-webdriver/util"
 	"time"
 )
 

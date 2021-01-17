@@ -23,6 +23,8 @@ const (
 
 	ACTION_NEW_WINDOW = 10701 // 新开窗口
 
+	ACTION_WAIT = 10801 // 等待
+
 	EXPECT_TYPE_EXIST = 1 // 存在与否类型
 
 	EXPECT_TYPE_VALUE = 2 // 值类型对比
@@ -38,7 +40,6 @@ const (
 
 // 操作
 type Action struct {
-
 	// 操作名称
 	ActionName string `json:"action_name"`
 
@@ -124,9 +125,46 @@ func (a *Action) Run() {
 		resp, _ := driver.NewWindow(a.session_id)
 		fmt.Sprintf("open window:", resp)
 		break
+	case ACTION_WAIT:
+		WaitFor(a)
+		break
 	}
 	if a.ActionDelay > 0 {
 		time.Sleep(time.Duration(a.ActionDelay) * time.Second)
 	}
 
+}
+
+func WaitFor(a *Action) {
+	tick := time.Tick(100 * time.Millisecond)
+	end := make(chan int)
+	go func() {
+	Loop:
+		for {
+			select {
+			case <-tick:
+				check(a, end)
+			case <-end:
+				break Loop
+			default:
+				time.Sleep(10 * time.Millisecond)
+			}
+		}
+	}()
+}
+
+func check(a *Action, ch chan int) {
+	resp, err := driver.FindElement(a.session_id, a.getSelector())
+	if a.ActionType == EXPECT_TYPE_EXIST {
+		if err == nil {
+			ch <- 1
+		}
+	} else if a.ActionType == EXPECT_TYPE_VALUE {
+		if err == nil {
+			respx, _ := driver.GetElementText(a.session_id, resp.Value.ElementId)
+			if respx.Value == a.ActionValue {
+				ch <- 1
+			}
+		}
+	}
 }

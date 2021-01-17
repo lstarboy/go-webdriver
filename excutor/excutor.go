@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/zhouzhe1157/go-webdriver/util"
 	"strings"
 	"time"
+	"zhouzhe1157/go-webdriver/util"
 )
 
 type Command struct {

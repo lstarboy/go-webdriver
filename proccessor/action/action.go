@@ -2,10 +2,10 @@ package action
 
 import (
 	"fmt"
-	"github.com/zhouzhe1157/go-webdriver/driver"
-	"github.com/zhouzhe1157/go-webdriver/excutor"
-	"github.com/zhouzhe1157/go-webdriver/util"
 	"time"
+	"zhouzhe1157/go-webdriver/driver"
+	"zhouzhe1157/go-webdriver/excutor"
+	"zhouzhe1157/go-webdriver/util"
 )
 
 const (

@@ -1,9 +1,9 @@
 package proccessor
 
 import (
-	"github.com/zhouzhe1157/go-webdriver/driver"
-	"github.com/zhouzhe1157/go-webdriver/excutor"
-	"github.com/zhouzhe1157/go-webdriver/proccessor/pipline"
+	"zhouzhe1157/go-webdriver/driver"
+	"zhouzhe1157/go-webdriver/excutor"
+	"zhouzhe1157/go-webdriver/proccessor/pipline"
 )
 
 // 开启case

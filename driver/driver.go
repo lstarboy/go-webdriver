@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/zhouzhe1157/go-webdriver/excutor"
-	"github.com/zhouzhe1157/go-webdriver/util"
 	"net/http"
+	"zhouzhe1157/go-webdriver/excutor"
+	"zhouzhe1157/go-webdriver/util"
 )
 
 type CommandRequest struct {

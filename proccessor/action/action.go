@@ -1,7 +1,8 @@
 package action
 
 import (
-	"fmt"
+	"errors"
+	"sync"
 	"time"
 	"zhouzhe1157/go-webdriver/driver"
 	"zhouzhe1157/go-webdriver/excutor"
@@ -89,88 +90,108 @@ func (a *Action) getSelector() excutor.Selector {
 	return excutor.CreateSelector(selector, a.ActionTarget)
 }
 
-func (a *Action) Run() {
+func (a *Action) Run() (errx error) {
 
 	// 操作类型
 	switch a.ActionType {
 
 	case ACTION_NAVIGATETO:
-		resp, err := driver.NavigateToUrl(a.session_id, a.ActionTarget)
-		fmt.Print(resp, err)
-		break
+		_, err := driver.NavigateToUrl(a.session_id, a.ActionTarget)
+		if err != nil {
+			return err
+		}
 	case ACTION_CLICK:
-		resp, _ := driver.FindElement(a.session_id, a.getSelector())
-		respx, _ := driver.ElementClick(a.session_id, resp.Value.ElementId)
-		fmt.Println(respx)
-		break
+		resp, err := driver.FindElement(a.session_id, a.getSelector())
+		if err != nil {
+			return err
+		}
+		_, err = driver.ElementClick(a.session_id, resp.Value.ElementId)
+		if err != nil {
+			return err
+		}
 	case ACTINO_SEND_KEYS:
-		resp, _ := driver.FindElement(a.session_id, a.getSelector())
-		respx, _ := driver.ElementSendKeys(a.session_id, resp.Value.ElementId, a.ActionValue)
-		fmt.Println(respx)
-		break
+		resp, err := driver.FindElement(a.session_id, a.getSelector())
+		if err != nil {
+			return err
+		}
+		_, err = driver.ElementSendKeys(a.session_id, resp.Value.ElementId, a.ActionValue)
+		if err != nil {
+			return err
+		}
 	case ACTION_VIEW_VALUE:
-		resp, _ := driver.FindElement(a.session_id, a.getSelector())
-		respx, _ := driver.GetElementText(a.session_id, resp.Value.ElementId)
-		fmt.Println("value is:", respx.Value)
-		break
+		resp, err := driver.FindElement(a.session_id, a.getSelector())
+		if err != nil {
+			return err
+		}
+		_, err = driver.GetElementText(a.session_id, resp.Value.ElementId)
+		if err != nil {
+			return err
+		}
 	case ACTION_SCREENSHOT:
-		resp, _ := driver.TakeScreenshot(a.session_id, "asd.png")
-		fmt.Println("value is: ", resp)
-		break
+		_, err := driver.TakeScreenshot(a.session_id, "asd.png")
+		if err != nil {
+			return err
+		}
 	case ACTION_SWITCH_WINDOW:
 		resp, _ := driver.GetWindowHandles(a.session_id)
 		handId := util.ToInt(a.ActionValue)
-		respx, _ := driver.SwitchToWindow(a.session_id, resp.Value[handId])
-		fmt.Sprintf("switch result", respx)
-		break
+		_, err := driver.SwitchToWindow(a.session_id, resp.Value[handId])
+		if err != nil {
+			return err
+		}
 	case ACTION_NEW_WINDOW:
-		resp, _ := driver.NewWindow(a.session_id)
-		fmt.Sprintf("open window:", resp)
-		break
+		_, err := driver.NewWindow(a.session_id)
+		if err != nil {
+			return err
+		}
 	case ACTINO_EXCUTE_SCRIPT:
-		resp, _ := driver.ExcuteScript(a.session_id, a.ActionValue)
-		fmt.Sprintf("resp result:", resp)
-		break
+		_, err := driver.ExcuteScript(a.session_id, a.ActionValue)
+		if err != nil {
+			return err
+		}
 	case ACTION_WAIT:
-		WaitFor(a)
-		break
+		err := WaitFor(a)
+		if err != nil {
+			return err
+		}
 	}
 	if a.ActionDelay > 0 {
 		time.Sleep(time.Duration(a.ActionDelay) * time.Second)
 	}
-
+	return nil
 }
 
-func WaitFor(a *Action) {
-	tick := time.Tick(100 * time.Millisecond)
+func WaitFor(a *Action) error {
+	tick := time.Tick(1000 * time.Millisecond)
+	timeout := time.After(1 * time.Second)
 	end := make(chan int)
+	var err error
+	wg := sync.WaitGroup{}
+	wg.Add(1)
 	go func() {
 	Loop:
 		for {
 			select {
+			case <-timeout:
+				err = errors.New("超时")
+				break Loop
 			case <-tick:
 				check(a, end)
 			case <-end:
 				break Loop
 			default:
-				time.Sleep(10 * time.Millisecond)
+				time.Sleep(100 * time.Millisecond)
 			}
 		}
+		wg.Done()
 	}()
+	wg.Wait()
+	return err
 }
 
 func check(a *Action, ch chan int) {
-	resp, err := driver.FindElement(a.session_id, a.getSelector())
-	if a.ActionType == EXPECT_TYPE_EXIST {
-		if err == nil {
-			ch <- 1
-		}
-	} else if a.ActionType == EXPECT_TYPE_VALUE {
-		if err == nil {
-			respx, _ := driver.GetElementText(a.session_id, resp.Value.ElementId)
-			if respx.Value == a.ActionValue {
-				ch <- 1
-			}
-		}
+	err := a.Run()
+	if err == nil {
+		ch <- 1
 	}
 }

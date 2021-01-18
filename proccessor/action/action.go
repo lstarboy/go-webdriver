@@ -32,7 +32,11 @@ const (
 
 	EXPECT_TYPE_EXIST = 1 // 存在与否类型
 
-	EXPECT_TYPE_VALUE = 2 // 值类型对比
+	EXPECT_TYPE_NOT_EXIST = 2 // 不存在
+
+	EXPECT_VALUE_EQUAL = 1 // 值类型对比相等
+
+	EXPECT_VALUE_NOT_EQUAL = 2 // 值类型对比不相等
 
 	BLOCK_ACTION = 1 // 阻塞行为
 
@@ -214,7 +218,7 @@ func (a *Action) waitFor() error {
 func check(a *Action, ch chan int) error {
 	err := a.dispatch()
 	if a.SufAction != nil {
-		err = check(a.SufAction, ch)
+		err = check(a.SufAction.WithSessionId(a.session_id), ch)
 	}
 	if err == nil {
 		ch <- 1

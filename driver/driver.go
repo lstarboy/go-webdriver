@@ -367,6 +367,7 @@ func ExcuteScript(sess_id string, script string) (excutor.ExecuteScriptResponse,
 		SessionId: sess_id,
 		Command:   excutor.ExecuteScript,
 		Request: excutor.ExecuteScriptRequest{
+			Args:   []string{},
 			Script: script,
 		},
 	}

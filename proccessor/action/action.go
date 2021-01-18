@@ -140,9 +140,12 @@ func (a *Action) dispatch() error {
 		if err != nil {
 			return err
 		}
-		_, err = driver.GetElementText(a.session_id, resp.Value.ElementId)
+		rex, err := driver.GetElementText(a.session_id, resp.Value.ElementId)
 		if err != nil {
 			return err
+		}
+		if rex.Value != a.ActionValue {
+			return errors.New("值不符合预期")
 		}
 	case ACTION_SCREENSHOT:
 		_, err := driver.TakeScreenshot(a.session_id, "asd.png")

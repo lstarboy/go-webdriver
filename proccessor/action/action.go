@@ -14,6 +14,8 @@ const (
 
 	ACTION_VIEW_VALUE = 10201 // 查看 （查看对象值，对象是否存在）
 
+	ACTION_VIEW_TITLE = 10202 // 获取title
+
 	ACTINO_SEND_KEYS = 10301 // 填写值
 
 	ACTION_CLICK = 10401 // 页面元素点击
@@ -117,6 +119,11 @@ func (a *Action) dispatch() error {
 		if err != nil {
 			return err
 		}
+	case ACTION_VIEW_TITLE:
+		_, err := driver.GetTitle(a.session_id)
+		if err != nil {
+			return err
+		}
 	case ACTION_CLICK:
 		resp, err := driver.FindElement(a.session_id, a.getSelector())
 		if err != nil {
@@ -204,9 +211,13 @@ func (a *Action) waitFor() error {
 	return err
 }
 
-func check(a *Action, ch chan int) {
+func check(a *Action, ch chan int) error {
 	err := a.dispatch()
+	if a.SufAction != nil {
+		err = check(a.SufAction, ch)
+	}
 	if err == nil {
 		ch <- 1
 	}
+	return err
 }

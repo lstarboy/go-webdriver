@@ -73,6 +73,12 @@ type Action struct {
 	// 是否阻塞循环执行
 	IsBlockUntil int `json:"is_block_until"`
 
+	// 前置行为
+	PreAction *Action `json:"pre_action"`
+
+	// 后置行为
+	SufAction *Action `json:"suf_action"`
+
 	// session_id
 	session_id string
 }

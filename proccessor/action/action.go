@@ -34,9 +34,9 @@ const (
 
 	EXPECT_TYPE_NOT_EXIST = 2 // 不存在
 
-	EXPECT_VALUE_EQUAL = 1 // 值类型对比相等
+	EXPECT_VALUE_EQUAL = 3 // 值类型对比相等
 
-	EXPECT_VALUE_NOT_EQUAL = 2 // 值类型对比不相等
+	EXPECT_VALUE_NOT_EQUAL = 4 // 值类型对比不相等
 
 	BLOCK_ACTION = 1 // 阻塞行为
 

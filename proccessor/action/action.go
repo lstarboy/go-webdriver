@@ -128,7 +128,7 @@ func (a *Action) Run() {
 		fmt.Sprintf("open window:", resp)
 		break
 	case ACTINO_EXCUTE_SCRIPT:
-		resp, _ := driver.ExcuteScript(a.session_id)
+		resp, _ := driver.ExcuteScript(a.session_id, a.ActionValue)
 		fmt.Sprintf("resp result:", resp)
 		break
 	case ACTION_WAIT:

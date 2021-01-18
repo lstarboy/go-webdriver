@@ -362,11 +362,13 @@ func GetTimeouts(sess_id string) {
 	//return resp, nil
 }
 
-func ExcuteScript(sess_id string) (excutor.ExecuteScriptResponse, error) {
+func ExcuteScript(sess_id string, script string) (excutor.ExecuteScriptResponse, error) {
 	req := CommandRequest{
 		SessionId: sess_id,
 		Command:   excutor.ExecuteScript,
-		Request:   excutor.ExecuteScriptRequest{},
+		Request: excutor.ExecuteScriptRequest{
+			Script: script,
+		},
 	}
 	body, err := send(req)
 	resp := excutor.ExecuteScriptResponse{}

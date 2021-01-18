@@ -70,6 +70,9 @@ type Action struct {
 	// 是否阻塞
 	IsBlock int `json:"is_block"`
 
+	// 是否阻塞循环执行
+	IsBlockUntil int `json:"is_block_until"`
+
 	// session_id
 	session_id string
 }
@@ -78,6 +81,15 @@ type Action struct {
 func (a *Action) WithSessionId(id string) *Action {
 	a.session_id = id
 	return a
+}
+
+// start
+func (a *Action) Run() {
+	if a.IsBlockUntil == 1 {
+		_ = a.waitFor()
+	} else {
+		_ = a.dispatch()
+	}
 }
 
 func (a *Action) getSelector() excutor.Selector {
@@ -90,8 +102,7 @@ func (a *Action) getSelector() excutor.Selector {
 	return excutor.CreateSelector(selector, a.ActionTarget)
 }
 
-func (a *Action) Run() (errx error) {
-
+func (a *Action) dispatch() error {
 	// 操作类型
 	switch a.ActionType {
 
@@ -149,11 +160,6 @@ func (a *Action) Run() (errx error) {
 		if err != nil {
 			return err
 		}
-	case ACTION_WAIT:
-		err := WaitFor(a)
-		if err != nil {
-			return err
-		}
 	}
 	if a.ActionDelay > 0 {
 		time.Sleep(time.Duration(a.ActionDelay) * time.Second)
@@ -161,7 +167,7 @@ func (a *Action) Run() (errx error) {
 	return nil
 }
 
-func WaitFor(a *Action) error {
+func (a *Action) waitFor() error {
 	tick := time.Tick(1000 * time.Millisecond)
 	timeout := time.After(1 * time.Second)
 	end := make(chan int)
@@ -190,7 +196,7 @@ func WaitFor(a *Action) error {
 }
 
 func check(a *Action, ch chan int) {
-	err := a.Run()
+	err := a.dispatch()
 	if err == nil {
 		ch <- 1
 	}

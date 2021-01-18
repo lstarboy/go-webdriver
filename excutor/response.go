@@ -19,6 +19,9 @@ type NavigateToResponse struct {
 
 type GetTitleResponse struct {
 	BaseResponse
+	SessionId string `json:"sessionId"`
+	Status    int    `json:"status"`
+	Value     string `json:"value"`
 }
 
 type GetWindowHandlesResponse struct {

@@ -6,6 +6,7 @@ import (
 	"time"
 	"zhouzhe1157/go-webdriver/driver"
 	"zhouzhe1157/go-webdriver/excutor"
+	errors2 "zhouzhe1157/go-webdriver/proccessor/errors"
 	"zhouzhe1157/go-webdriver/util"
 )
 
@@ -124,9 +125,12 @@ func (a *Action) dispatch() error {
 			return err
 		}
 	case ACTION_VIEW_TITLE:
-		_, err := driver.GetTitle(a.session_id)
+		rex, err := driver.GetTitle(a.session_id)
 		if err != nil {
 			return err
+		}
+		if rex.Value != a.ActionValue {
+			return errors2.NewExpectError("预期值不符合")
 		}
 	case ACTION_CLICK:
 		resp, err := driver.FindElement(a.session_id, a.getSelector())
@@ -156,7 +160,7 @@ func (a *Action) dispatch() error {
 			return err
 		}
 		if rex.Value != a.ActionValue {
-			return errors.New("值不符合预期")
+			return errors2.NewExpectError("预期值不符合")
 		}
 	case ACTION_SCREENSHOT:
 		_, err := driver.TakeScreenshot(a.session_id, "asd.png")
@@ -189,7 +193,7 @@ func (a *Action) dispatch() error {
 
 func (a *Action) waitFor() error {
 	tick := time.Tick(1000 * time.Millisecond)
-	timeout := time.After(1 * time.Second)
+	timeout := time.After(300 * time.Second)
 	end := make(chan int)
 	var err error
 	wg := sync.WaitGroup{}

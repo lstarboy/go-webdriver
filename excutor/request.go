@@ -37,3 +37,9 @@ type GetElementTextRequest struct {
 type TakeScreenshotRequest struct {
 	BaseRequest
 }
+
+type ExecuteScriptRequest struct {
+	BaseRequest
+	Script string   `json:"script"`
+	Args   []string `json:"args"`
+}

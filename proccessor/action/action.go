@@ -25,6 +25,8 @@ const (
 
 	ACTION_WAIT = 10801 // 等待
 
+	ACTINO_EXCUTE_SCRIPT = 10901 // 执行脚本
+
 	EXPECT_TYPE_EXIST = 1 // 存在与否类型
 
 	EXPECT_TYPE_VALUE = 2 // 值类型对比
@@ -124,6 +126,10 @@ func (a *Action) Run() {
 	case ACTION_NEW_WINDOW:
 		resp, _ := driver.NewWindow(a.session_id)
 		fmt.Sprintf("open window:", resp)
+		break
+	case ACTINO_EXCUTE_SCRIPT:
+		resp, _ := driver.ExcuteScript(a.session_id)
+		fmt.Sprintf("resp result:", resp)
 		break
 	case ACTION_WAIT:
 		WaitFor(a)

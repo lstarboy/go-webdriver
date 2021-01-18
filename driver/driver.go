@@ -361,3 +361,21 @@ func GetTimeouts(sess_id string) {
 	//util.SaveImage(fileName, resp.Value)
 	//return resp, nil
 }
+
+func ExcuteScript(sess_id string) (excutor.ExecuteScriptResponse, error) {
+	req := CommandRequest{
+		SessionId: sess_id,
+		Command:   excutor.ExecuteScript,
+		Request:   excutor.ExecuteScriptRequest{},
+	}
+	body, err := send(req)
+	resp := excutor.ExecuteScriptResponse{}
+	if err != nil {
+		return resp, err
+	}
+	err = json.Unmarshal([]byte(body), &resp)
+	if err != nil {
+		return resp, err
+	}
+	return resp, nil
+}

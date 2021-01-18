@@ -59,11 +59,17 @@ type ElementSendKeysResponse struct {
 }
 
 type GetElementTextResponse struct {
-	BaseRequest
+	BaseResponse
 	Value interface{} `json:"value"`
 }
 
 type TakeScreenshotResponse struct {
-	BaseRequest
+	BaseResponse
 	Value string `json:"value"`
+}
+
+type ExecuteScriptResponse struct {
+	BaseResponse
+	Value  interface{} `json:"value"`
+	Status int         `json:"status"`
 }

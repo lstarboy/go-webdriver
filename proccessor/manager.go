@@ -7,9 +7,13 @@ import (
 )
 
 // 开启case
-func StartCase(pips []pipline.Pipline) error {
+func StartCase(pips []pipline.Pipline, logPath string) error {
+	opts := excutor.ChromeOptions{IsHeadless: false}
 	// 获取session
-	resp, err := driver.GetSession(excutor.ChromeOptions{IsHeadless: false})
+	if logPath != "" {
+		opts.UserDataDir = logPath
+	}
+	resp, err := driver.GetSession(opts)
 	if err != nil {
 		return err
 	}

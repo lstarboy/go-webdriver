@@ -197,9 +197,9 @@ func (a *Action) waitFor() error {
 	timeout := time.After(300 * time.Second)
 	end := make(chan int)
 	var err error
-	wg := sync.WaitGroup{}
+	wg := &sync.WaitGroup{}
 	wg.Add(1)
-	go func() {
+	go func(wg *sync.WaitGroup) {
 	Loop:
 		for {
 			select {
@@ -215,7 +215,7 @@ func (a *Action) waitFor() error {
 			}
 		}
 		wg.Done()
-	}()
+	}(wg)
 	wg.Wait()
 	return err
 }

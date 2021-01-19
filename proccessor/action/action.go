@@ -4,7 +4,7 @@ import (
 	"time"
 	"zhouzhe1157/go-webdriver/driver"
 	"zhouzhe1157/go-webdriver/excutor"
-	errors2 "zhouzhe1157/go-webdriver/proccessor/errors"
+	"zhouzhe1157/go-webdriver/proccessor/errors"
 	"zhouzhe1157/go-webdriver/util"
 )
 
@@ -130,8 +130,9 @@ func (a *Action) dispatch() error {
 		if err != nil {
 			return err
 		}
-		if rex.Value != a.ActionExpectValue {
-			return errors2.NewExpectError("预期值不符合")
+		err = a.validateResponse(rex)
+		if err != nil {
+			return err
 		}
 	case ACTION_CLICK:
 		resp, err := driver.FindElement(a.session_id, a.getSelector())
@@ -161,8 +162,9 @@ func (a *Action) dispatch() error {
 		if err != nil {
 			return err
 		}
-		if rex.Value != a.ActionExpectValue {
-			return errors2.NewExpectError("预期值不符合")
+		err = a.validateResponse(rex)
+		if err != nil {
+			return err
 		}
 	case ACTION_VIEW_TEXT:
 		resp, err := driver.FindElement(a.session_id, a.getSelector())
@@ -173,8 +175,9 @@ func (a *Action) dispatch() error {
 		if err != nil {
 			return err
 		}
-		if rex.Value != a.ActionExpectValue {
-			return errors2.NewExpectError("预期值不符合")
+		err = a.validateResponse(rex)
+		if err != nil {
+			return err
 		}
 	case ACTION_SCREENSHOT:
 		_, err := driver.TakeScreenshot(a.session_id, "asd.png")
@@ -216,7 +219,7 @@ func (a *Action) waitFor() error {
 			case <-timeout:
 				end <- struct{}{}
 			case <-tick:
-				_ = check(a, end)
+				_ = a.check(end)
 			}
 		}
 	}()
@@ -224,11 +227,11 @@ func (a *Action) waitFor() error {
 	return err
 }
 
-func check(a *Action, ch chan struct{}) (err error) {
+func (a *Action) check(ch chan struct{}) (err error) {
 
 	// 前置动作， 完成之后还需要继续完成后续工作
 	if a.PreAction != nil {
-		err = check(a.PreAction.WithSessionId(a.session_id), nil)
+		err = a.PreAction.WithSessionId(a.session_id).check(nil)
 	}
 
 	// 当前动作
@@ -240,7 +243,7 @@ func check(a *Action, ch chan struct{}) (err error) {
 
 	// 后置动作
 	if a.SufAction != nil {
-		err = check(a.SufAction.WithSessionId(a.session_id), ch)
+		err = a.SufAction.WithSessionId(a.session_id).check(ch)
 	}
 
 	if err == nil {
@@ -250,4 +253,57 @@ func check(a *Action, ch chan struct{}) (err error) {
 		}
 	}
 	return err
+}
+
+func (a *Action) validateResponse(resp interface{}) error {
+
+	actual_value := ""
+
+	// 推断结果类型
+	switch resp.(type) {
+
+	case excutor.GetElementAttributeResponse:
+		tvalue := resp.(excutor.GetElementAttributeResponse).Value
+		if tvalue == nil {
+			actual_value = ""
+		} else {
+			if tv, ok := tvalue.(string); ok {
+				actual_value = tv
+			}
+		}
+	case excutor.GetElementTextResponse:
+		tvalue := resp.(excutor.GetElementTextResponse).Value
+		if tvalue == nil {
+			actual_value = ""
+		} else {
+			if tv, ok := tvalue.(string); ok {
+				actual_value = tv
+			}
+		}
+	case excutor.GetTitleResponse:
+		actual_value = resp.(excutor.GetTitleResponse).Value
+	}
+
+	if actual_value == "" {
+		if a.ExpectType == EXPECT_TYPE_EXIST {
+			return errors.NewExpectError("不存在值")
+		} else if a.ExpectType == EXPECT_VALUE_EQUAL {
+			if a.ActionExpectValue != "" {
+				return errors.NewExpectError("不存在值")
+			}
+		}
+	} else {
+		if a.ExpectType == EXPECT_TYPE_NOT_EXIST {
+			return errors.NewExpectError("存在值")
+		} else if a.ExpectType == EXPECT_VALUE_EQUAL {
+			if a.ActionExpectValue != actual_value {
+				return errors.NewExpectError("不匹配")
+			}
+		} else if a.ExpectType == EXPECT_VALUE_NOT_EQUAL {
+			if a.ActionExpectValue == actual_value {
+				return errors.NewExpectError("值匹配")
+			}
+		}
+	}
+	return nil
 }

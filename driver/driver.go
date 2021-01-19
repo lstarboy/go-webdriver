@@ -300,6 +300,25 @@ func ElementSendKeys(sess_id, element_id, value string) (excutor.ElementSendKeys
 	return resp, nil
 }
 
+func GetElementAttribute(sess_id, element_id string) (excutor.GetElementAttributeResponse, error) {
+	req := CommandRequest{
+		SessionId: sess_id,
+		ElementId: element_id,
+		Command:   excutor.GetElementAttribute,
+	}
+	body, err := send(req)
+	resp := excutor.GetElementAttributeResponse{}
+
+	if err != nil {
+		return resp, err
+	}
+	err = json.Unmarshal([]byte(body), &resp)
+	if err != nil {
+		return resp, err
+	}
+	return resp, nil
+}
+
 func GetElementText(sess_id, element_id string) (excutor.GetElementTextResponse, error) {
 	req := CommandRequest{
 		SessionId: sess_id,

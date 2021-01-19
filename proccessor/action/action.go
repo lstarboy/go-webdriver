@@ -13,6 +13,8 @@ const (
 
 	ACTION_VIEW_VALUE = 10201 // 查看 （查看对象值，对象是否存在）
 
+	ACTION_VIEW_TEXT = 10203 // 查看属性
+
 	ACTION_VIEW_TITLE = 10202 // 获取title
 
 	ACTINO_SEND_KEYS = 10301 // 填写值
@@ -149,7 +151,20 @@ func (a *Action) dispatch() error {
 		if err != nil {
 			return err
 		}
+
 	case ACTION_VIEW_VALUE:
+		resp, err := driver.FindElement(a.session_id, a.getSelector())
+		if err != nil {
+			return err
+		}
+		rex, err := driver.GetElementAttribute(a.session_id, resp.Value.ElementId)
+		if err != nil {
+			return err
+		}
+		if rex.Value != a.ActionValue {
+			return errors2.NewExpectError("预期值不符合")
+		}
+	case ACTION_VIEW_TEXT:
 		resp, err := driver.FindElement(a.session_id, a.getSelector())
 		if err != nil {
 			return err

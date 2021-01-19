@@ -66,6 +66,11 @@ type GetElementTextResponse struct {
 	Value interface{} `json:"value"`
 }
 
+type GetElementAttributeResponse struct {
+	BaseResponse
+	Value interface{} `json:"value"`
+}
+
 type TakeScreenshotResponse struct {
 	BaseResponse
 	Value string `json:"value"`

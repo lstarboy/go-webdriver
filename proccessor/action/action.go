@@ -2,7 +2,6 @@ package action
 
 import (
 	"errors"
-	"sync"
 	"time"
 	"zhouzhe1157/go-webdriver/driver"
 	"zhouzhe1157/go-webdriver/excutor"
@@ -195,11 +194,9 @@ func (a *Action) dispatch() error {
 func (a *Action) waitFor() error {
 	tick := time.Tick(1000 * time.Millisecond)
 	timeout := time.After(300 * time.Second)
-	end := make(chan int)
+	end := make(chan struct{})
 	var err error
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
-	go func(wg *sync.WaitGroup) {
+	go func() {
 	Loop:
 		for {
 			select {
@@ -208,25 +205,26 @@ func (a *Action) waitFor() error {
 				break Loop
 			case <-tick:
 				_ = check(a, end)
-			case <-end:
-				break Loop
 			default:
 				time.Sleep(100 * time.Millisecond)
 			}
 		}
-		wg.Done()
-	}(wg)
-	wg.Wait()
+	}()
+	<-end
 	return err
 }
 
-func check(a *Action, ch chan int) error {
+func check(a *Action, ch chan struct{}) error {
 	err := a.dispatch()
 	if a.SufAction != nil {
 		err = check(a.SufAction.WithSessionId(a.session_id), ch)
 	}
 	if err == nil {
-		ch <- 1
+		if len(ch) != 0 {
+			return nil
+		}
+		ch <- struct{}{}
+		return nil
 	}
 	return err
 }

@@ -308,6 +308,7 @@ func GetElementAttribute(sess_id, element_id, value_name string) (excutor.GetEle
 	req := CommandRequest{
 		SessionId: sess_id,
 		ElementId: element_id,
+		Name:      value_name,
 		Command:   excutor.GetElementAttribute,
 	}
 	body, err := send(req)

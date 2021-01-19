@@ -207,7 +207,7 @@ func (a *Action) waitFor() error {
 				err = errors.New("超时")
 				break Loop
 			case <-tick:
-				check(a, end)
+				_ = check(a, end)
 			case <-end:
 				break Loop
 			default:

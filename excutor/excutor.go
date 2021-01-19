@@ -123,19 +123,19 @@ func (exe *Excutor) parse() (string, error) {
 		path = strings.Replace(exe.cmd.path, "{sessionid}", exe.session_id, -1)
 	}
 	if strings.Contains(path, "{name}") {
-		if exe.session_id == "" {
+		if exe.name == "" {
 			return "", errors.New("name不能为空")
 		}
 		path = strings.Replace(path, "{name}", exe.name, -1)
 	}
 	if strings.Contains(path, "{propertyname}") {
-		if exe.session_id == "" {
+		if exe.propertyname == "" {
 			return "", errors.New("propertyname不能为空")
 		}
 		path = strings.Replace(path, "{propertyname}", exe.propertyname, -1)
 	}
 	if strings.Contains(path, "{elementid}") {
-		if exe.session_id == "" {
+		if exe.element_id == "" {
 			return "", errors.New("elementid不能为空")
 		}
 		path = strings.Replace(path, "{elementid}", exe.element_id, -1)

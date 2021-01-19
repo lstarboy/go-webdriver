@@ -130,7 +130,7 @@ func (a *Action) dispatch() error {
 		if err != nil {
 			return err
 		}
-		if rex.Value != a.ActionValue {
+		if rex.Value != a.ActionExpectValue {
 			return errors2.NewExpectError("预期值不符合")
 		}
 	case ACTION_CLICK:
@@ -157,11 +157,11 @@ func (a *Action) dispatch() error {
 		if err != nil {
 			return err
 		}
-		rex, err := driver.GetElementAttribute(a.session_id, resp.Value.ElementId)
+		rex, err := driver.GetElementAttribute(a.session_id, resp.Value.ElementId, a.ActionValue)
 		if err != nil {
 			return err
 		}
-		if rex.Value != a.ActionValue {
+		if rex.Value != a.ActionExpectValue {
 			return errors2.NewExpectError("预期值不符合")
 		}
 	case ACTION_VIEW_TEXT:
@@ -173,7 +173,7 @@ func (a *Action) dispatch() error {
 		if err != nil {
 			return err
 		}
-		if rex.Value != a.ActionValue {
+		if rex.Value != a.ActionExpectValue {
 			return errors2.NewExpectError("预期值不符合")
 		}
 	case ACTION_SCREENSHOT:

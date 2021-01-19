@@ -12,6 +12,7 @@ import (
 type CommandRequest struct {
 	SessionId string
 	ElementId string
+	Name      string
 	Command   excutor.Command
 	Request   excutor.Request
 	Response  excutor.Response
@@ -25,6 +26,9 @@ func send(req CommandRequest) (string, error) {
 	}
 	if req.ElementId != "" {
 		exec.WithElementId(req.ElementId)
+	}
+	if req.Name != "" {
+		exec.WithName(req.Name)
 	}
 	body, status, err := exec.Excute("http://127.0.0.1:9515", req.Request)
 	if err != nil {
@@ -300,7 +304,7 @@ func ElementSendKeys(sess_id, element_id, value string) (excutor.ElementSendKeys
 	return resp, nil
 }
 
-func GetElementAttribute(sess_id, element_id string) (excutor.GetElementAttributeResponse, error) {
+func GetElementAttribute(sess_id, element_id, value_name string) (excutor.GetElementAttributeResponse, error) {
 	req := CommandRequest{
 		SessionId: sess_id,
 		ElementId: element_id,

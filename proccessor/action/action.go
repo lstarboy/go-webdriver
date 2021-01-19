@@ -1,7 +1,6 @@
 package action
 
 import (
-	"errors"
 	"time"
 	"zhouzhe1157/go-webdriver/driver"
 	"zhouzhe1157/go-webdriver/excutor"
@@ -197,16 +196,12 @@ func (a *Action) waitFor() error {
 	end := make(chan struct{})
 	var err error
 	go func() {
-	Loop:
 		for {
 			select {
 			case <-timeout:
-				err = errors.New("超时")
-				break Loop
+				end <- struct{}{}
 			case <-tick:
 				_ = check(a, end)
-			default:
-				time.Sleep(100 * time.Millisecond)
 			}
 		}
 	}()
@@ -220,9 +215,6 @@ func check(a *Action, ch chan struct{}) error {
 		err = check(a.SufAction.WithSessionId(a.session_id), ch)
 	}
 	if err == nil {
-		if len(ch) != 0 {
-			return nil
-		}
 		ch <- struct{}{}
 		return nil
 	}

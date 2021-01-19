@@ -17,6 +17,14 @@ func RandString(len int) string {
 	return string(bytes)
 }
 
+func RandInt(start, end int) int {
+	if end <= start {
+		return start
+	}
+	mid := end -start
+	return start + rand.Int() % mid
+}
+
 func SaveImage(fileName string, base64Str string) {
 	//解压
 	dist, _ := base64.StdEncoding.DecodeString(base64Str)

@@ -24,8 +24,12 @@ func (p *Pipline) SetSessionId(id string) *Pipline {
 	return p
 }
 
-func (p Pipline) Start() {
+func (p Pipline) Start() error {
 	for _, ac := range p.Data.Actions {
-		ac.WithSessionId(p.sessionId).Run()
+		err := ac.WithSessionId(p.sessionId).Run()
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }

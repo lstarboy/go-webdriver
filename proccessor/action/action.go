@@ -97,12 +97,13 @@ func (a *Action) WithSessionId(id string) *Action {
 }
 
 // start
-func (a *Action) Run() {
+func (a *Action) Run() (err error) {
 	if a.IsBlockUntil == 1 {
-		_ = a.waitFor()
+		err = a.waitFor()
 	} else {
-		_ = a.dispatch()
+		err = a.dispatch()
 	}
+	return err
 }
 
 func (a *Action) getSelector() excutor.Selector {

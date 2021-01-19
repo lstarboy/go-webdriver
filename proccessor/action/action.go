@@ -209,14 +209,30 @@ func (a *Action) waitFor() error {
 	return err
 }
 
-func check(a *Action, ch chan struct{}) error {
-	err := a.dispatch()
+func check(a *Action, ch chan struct{}) (err error) {
+
+	// 前置动作， 完成之后还需要继续完成后续工作
+	if a.PreAction != nil {
+		err = check(a.PreAction.WithSessionId(a.session_id), nil)
+	}
+
+	// 当前动作
+	if err == nil {
+		err = a.dispatch()
+	} else {
+		return err
+	}
+
+	// 后置动作
 	if a.SufAction != nil {
 		err = check(a.SufAction.WithSessionId(a.session_id), ch)
 	}
+
 	if err == nil {
-		ch <- struct{}{}
-		return nil
+		if ch != nil {
+			ch <- struct{}{}
+			return nil
+		}
 	}
 	return err
 }

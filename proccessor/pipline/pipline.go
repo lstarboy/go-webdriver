@@ -19,8 +19,9 @@ func (p Pipline) GetSessionId() string {
 	return p.sessionId
 }
 
-func (p *Pipline) SetSessionId(id string) {
+func (p *Pipline) SetSessionId(id string) *Pipline {
 	p.sessionId = id
+	return p
 }
 
 func (p Pipline) Start() {

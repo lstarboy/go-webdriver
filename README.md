@@ -103,8 +103,8 @@
     action2 := action.Action {
         ActionName: "输入参数",
         ActionType: action.ACTION_VIEW_VALUE,
-		ActionTarget: "#kw",
-		ExpectType: action.EXPECT_TYPE_EXIST,
+        ActionTarget: "#kw",
+        ExpectType: action.EXPECT_TYPE_EXIST,
 	}
 	
 	action3 := action.Action {

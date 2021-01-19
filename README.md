@@ -119,3 +119,7 @@
 	
 ```
 
+#### 待完成功能
+* 更多版本浏览器，以及chromedriver的兼容
+* 对`webdriver` `Command` 支持完善
+* 更多场景的支持

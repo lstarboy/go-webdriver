@@ -11,7 +11,7 @@ func RandString(len int) string {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	bytes := make([]byte, len)
 	for i := 0; i < len; i++ {
-		b := r.Intn(26) + 65
+		b := r.Intn(26) + 97
 		bytes[i] = byte(b)
 	}
 	return string(bytes)
@@ -21,8 +21,8 @@ func RandInt(start, end int) int {
 	if end <= start {
 		return start
 	}
-	mid := end -start
-	return start + rand.Int() % mid
+	mid := end - start
+	return start + rand.Int()%mid
 }
 
 func SaveImage(fileName string, base64Str string) {
